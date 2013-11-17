@@ -6,12 +6,14 @@ class Application
 
 	def run
     show_intro
+    read_from_csv
     loop do
 		  show_main_menu
       input = clean_input(gets)
       manage_main_menu_input(input)
       break if input == "quit"
     end
+    write_to_csv
     show_exit_msg
 	end
 
@@ -23,6 +25,7 @@ class Application
       list_contact
     when /\Ashow/
       show_contact(input)
+    when "quit"
     else
       puts "Invalid input!"
     end
@@ -36,6 +39,7 @@ class Application
       edit_email(id)
     when "add phone"
       add_phone(id)
+    when "back"
     else
       puts "Invalid input!"
     end
@@ -167,4 +171,40 @@ class Application
     puts " back         - Back to main menu"
     print "> "
   end
+
+  def write_to_csv
+    CSV.open("contact.csv", "wb") do |csv|
+      @contacts.each_with_index do |contact, index|  
+        newArray = []
+        newArray << index << contact.first_name << contact.last_name << contact.email
+        csv << newArray
+      end
+    end
+
+    CSV.open("phone.csv", "wb") do |csv|
+      @contacts.each_with_index do |contact, index|  
+        unless contact.phone.empty?
+          contact.phone.each do |key, value|
+            newArray = []
+            newArray << index << key << value
+            csv << newArray
+          end
+        end
+      end
+    end   
+  end
+
+  def read_from_csv
+    CSV.foreach("contact.csv") do |row|
+      full_name = generate_full_name(row[1], row[2])
+      email = row[3]
+      @contacts << Contact.new(full_name, email)
+    end
+    CSV.foreach("phone.csv") do |row|
+      id = row[0].to_i
+      label = row[1]
+      @contacts[id].phone[label] = row[2]
+    end
+  end
+
 end
