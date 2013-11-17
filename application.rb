@@ -1,10 +1,10 @@
 class Application
 
-	def initialize
-		@contacts = []
-	end
+  def initialize
+    @contacts = []
+  end
 
-	def run
+  def run
     show_intro
     read_from_csv
     loop do
