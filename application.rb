@@ -25,6 +25,8 @@ class Application
       list_contact
     when /\Ashow/
       show_contact(input)
+    when /\Afind/
+      find_contact(input)
     when "quit"
     else
       puts "Invalid input!"
@@ -88,6 +90,25 @@ class Application
         puts "Invalid input, must include a valid id!"
       end
     end
+  end
+
+  def find_contact(input)
+    input = input.split(" ")
+    if input.count == 1
+      puts "Invalid input, must include a search term!"
+    else
+      term = input[1]
+      found = @contacts.select do |contact|
+                phone = contact.phone.select { |key, value| value.include?(term) }
+                phone.count > 0 || contact.first_name.downcase.include?(term.downcase) || 
+                contact.last_name.downcase.include?(term.downcase) || contact.email.downcase.include?(term.downcase)
+              end
+      if found.empty?
+        puts "Not found!"
+      else
+        found.each { |x| x.display }
+      end
+    end    
   end
 
   def edit_action(id)
@@ -157,10 +178,11 @@ class Application
   end
 
   def show_main_menu
-    puts " new      - Create a new contact"
-    puts " list     - List all contacts"
-    puts " show :id - Display contact details"
-    puts " quit     - Quit the program"
+    puts " new         - Create a new contact"
+    puts " list        - List all contacts"
+    puts " find :term  - Find a contact using search term"
+    puts " show :id    - Display contact details"
+    puts " quit        - Quit the program"
     print "> "
   end
 
@@ -195,15 +217,18 @@ class Application
   end
 
   def read_from_csv
-    CSV.foreach("contact.csv") do |row|
-      full_name = generate_full_name(row[1], row[2])
-      email = row[3]
-      @contacts << Contact.new(full_name, email)
-    end
-    CSV.foreach("phone.csv") do |row|
-      id = row[0].to_i
-      label = row[1]
-      @contacts[id].phone[label] = row[2]
+    begin
+      CSV.foreach("contact.csv") do |row|
+        full_name = generate_full_name(row[1], row[2])
+        email = row[3]
+        @contacts << Contact.new(full_name, email)
+      end
+      CSV.foreach("phone.csv") do |row|
+        id = row[0].to_i
+        label = row[1]
+        @contacts[id].phone[label] = row[2]
+      end
+    rescue
     end
   end
 
