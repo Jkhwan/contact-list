@@ -21,6 +21,8 @@ class Application
       create_contact
     when "list"
       list_contact
+    when /\Ashow/
+      show_contact(input)
     end
   end
 
@@ -37,6 +39,20 @@ class Application
       puts "No contacts"
     else
       @contacts.each_with_index { |contact, index| puts "#{index}: #{contact}" }
+    end
+  end
+
+  def show_contact(input)
+    input = input.split(" ")
+    if input.count == 1
+      puts "Invalid input, must include an id!"
+    else
+      id = input[1]
+      if id.match(/[0-9+]/) && id.to_i < @contacts.count
+        @contacts[id.to_i].display
+      else
+        puts "Invalid input, must include a valid id!"
+      end
     end
   end
 

@@ -11,6 +11,12 @@ class Contact
     "#{@first_name} #{@last_name} (#{@email})"
   end
 
+  def display
+    puts "First name: #{@first_name}"
+    puts "Last name: #{@last_name}"
+    puts "Email: #{@email}"
+  end
+
   def split_name(name)
     name = name.split(" ")
     @first_name = name.first
