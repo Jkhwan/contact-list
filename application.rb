@@ -8,7 +8,7 @@ class Application
     show_intro
     read_from_csv
     loop do
-		  show_main_menu
+      show_main_menu
       input = clean_input(gets)
       manage_main_menu_input(input)
       break if input == "quit"
