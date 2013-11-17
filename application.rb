@@ -19,18 +19,25 @@ class Application
     case input.downcase
     when "new"
       create_contact
+    when "list"
+      list_contact
     end
   end
 
   def create_contact
-    print "Enter your first name: "
-    first_name = clean_input(gets)
-    print "Enter your last name: "
-    last_name = clean_input(gets)
-    print "Enter your email: "
-    email = clean_input(gets)
-    full_name = cap_first_letter(first_name) + " " + cap_first_letter(last_name)
+    first_name = get_first_name
+    last_name = get_last_name
+    email = get_email
+    full_name = generate_full_name(first_name, last_name)
     @contacts << Contact.new(full_name, email) unless full_name.empty? || email.empty?
+  end
+
+  def list_contact
+    if @contacts.empty?
+      puts "No contacts"
+    else
+      @contacts.each_with_index { |contact, index| puts "#{index}: #{contact}" }
+    end
   end
 
   def show_intro
@@ -56,5 +63,24 @@ class Application
   def cap_first_letter(input)
     input[0].upcase + input[1..-1] unless input.empty?
     input ||= ""
+  end
+
+  def get_first_name
+    print "Enter your first name: "
+    clean_input(gets)
+  end
+
+  def get_last_name
+    print "Enter your last name: "
+    clean_input(gets)
+  end
+
+  def get_email
+    print "Enter your email: "
+    email = clean_input(gets)
+  end
+
+  def generate_full_name(first_name, last_name)
+    cap_first_letter(first_name) + " " + cap_first_letter(last_name)
   end
 end
