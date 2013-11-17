@@ -9,13 +9,13 @@ class Application
     loop do
 		  show_main_menu
       input = clean_input(gets)
-      manage_input(input)
+      manage_main_menu_input(input)
       break if input == "quit"
     end
     show_exit_msg
 	end
 
-  def manage_input(input)
+  def manage_main_menu_input(input)
     case input.downcase
     when "new"
       create_contact
@@ -24,6 +24,24 @@ class Application
     when /\Ashow/
       show_contact(input)
     end
+  end
+
+  def manage_edit_menu_input(input, id)
+    case input.downcase
+    when "edit name"
+      edit_name(id)
+    when "edit email"
+      edit_email(id)
+    end
+  end
+
+  def edit_name(id)
+    @contacts[id].first_name = get_first_name
+    @contacts[id].last_name = get_last_name
+  end
+
+  def edit_email(id)
+    @contacts[id].email = get_email
   end
 
   def create_contact
@@ -50,26 +68,20 @@ class Application
       id = input[1]
       if id.match(/[0-9+]/) && id.to_i < @contacts.count
         @contacts[id.to_i].display
+        edit_action(id.to_i)
       else
         puts "Invalid input, must include a valid id!"
       end
     end
   end
 
-  def show_intro
-    puts "Welcome to the app. What's next?"
-  end
-
-  def show_exit_msg
-    puts "Adeu!"
-  end
-
-	def show_main_menu
-		puts " new      - Create a new contact"
-    puts " list     - List all contacts"
-    puts " show :id - Display contact details"
-    puts " quit     - Quit the program"
-    print "> "
+  def edit_action(id)
+    loop do
+      show_edit_menu
+      input = clean_input(gets)
+      manage_edit_menu_input(input, id)
+      break if input == "back"
+    end
   end
 
   def clean_input(input)
@@ -96,13 +108,41 @@ class Application
     loop do
       print "Enter your email: "
       email = clean_input(gets)
-      break unless @contacts.detect { |contact| contact.email == email } # nil if no duplicate
+      break unless check_email_duplicate(email)
       puts "Email already exists!"
     end
     email
   end
 
+  def check_email_duplicate(email)
+    @contacts.detect { |contact| contact.email == email } ? true : false
+  end
+
   def generate_full_name(first_name, last_name)
     cap_first_letter(first_name) + " " + cap_first_letter(last_name)
+  end
+
+
+  def show_intro
+    puts "Welcome to the app. What's next?"
+  end
+
+  def show_exit_msg
+    puts "Adeu!"
+  end
+
+  def show_main_menu
+    puts " new      - Create a new contact"
+    puts " list     - List all contacts"
+    puts " show :id - Display contact details"
+    puts " quit     - Quit the program"
+    print "> "
+  end
+
+  def show_edit_menu
+    puts " edit name    - Edit name of contact"
+    puts " edit email   - Edit email of contact"
+    puts " back         - Back to main menu"
+    print "> "
   end
 end
