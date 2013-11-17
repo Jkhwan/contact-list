@@ -27,9 +27,9 @@ class Application
   end
 
   def create_contact
+    email = get_email
     first_name = get_first_name
     last_name = get_last_name
-    email = get_email
     full_name = generate_full_name(first_name, last_name)
     @contacts << Contact.new(full_name, email) unless full_name.empty? || email.empty?
   end
@@ -92,8 +92,14 @@ class Application
   end
 
   def get_email
-    print "Enter your email: "
-    email = clean_input(gets)
+    email = ""
+    loop do
+      print "Enter your email: "
+      email = clean_input(gets)
+      break unless @contacts.detect { |contact| contact.email == email } # nil if no duplicate
+      puts "Email already exists!"
+    end
+    email
   end
 
   def generate_full_name(first_name, last_name)
