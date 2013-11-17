@@ -23,6 +23,8 @@ class Application
       list_contact
     when /\Ashow/
       show_contact(input)
+    else
+      puts "Invalid input!"
     end
   end
 
@@ -32,6 +34,10 @@ class Application
       edit_name(id)
     when "edit email"
       edit_email(id)
+    when "add phone"
+      add_phone(id)
+    else
+      puts "Invalid input!"
     end
   end
 
@@ -42,6 +48,12 @@ class Application
 
   def edit_email(id)
     @contacts[id].email = get_email
+  end
+
+  def add_phone(id)
+    phone_number = get_phone_number
+    phone_label = get_phone_label
+    @contacts[id].phone[phone_label] = phone_number
   end
 
   def create_contact
@@ -67,7 +79,6 @@ class Application
     else
       id = input[1]
       if id.match(/[0-9+]/) && id.to_i < @contacts.count
-        @contacts[id.to_i].display
         edit_action(id.to_i)
       else
         puts "Invalid input, must include a valid id!"
@@ -77,6 +88,7 @@ class Application
 
   def edit_action(id)
     loop do
+      @contacts[id.to_i].display
       show_edit_menu
       input = clean_input(gets)
       manage_edit_menu_input(input, id)
@@ -89,7 +101,7 @@ class Application
   end
 
   def cap_first_letter(input)
-    input[0].upcase + input[1..-1] unless input.empty?
+    input = input[0].upcase + input[1..-1] unless input.empty?
     input ||= ""
   end
 
@@ -101,6 +113,16 @@ class Application
   def get_last_name
     print "Enter your last name: "
     clean_input(gets)
+  end
+
+  def get_phone_number
+    print "Enter your phone number: "
+    clean_input(gets)
+  end
+
+  def get_phone_label
+    print "Enter a label: "
+    cap_first_letter(clean_input(gets))
   end
 
   def get_email
@@ -122,7 +144,6 @@ class Application
     cap_first_letter(first_name) + " " + cap_first_letter(last_name)
   end
 
-
   def show_intro
     puts "Welcome to the app. What's next?"
   end
@@ -140,6 +161,7 @@ class Application
   end
 
   def show_edit_menu
+    puts " add phone    - Add phone numbers to contact"
     puts " edit name    - Edit name of contact"
     puts " edit email   - Edit email of contact"
     puts " back         - Back to main menu"

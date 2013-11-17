@@ -1,10 +1,11 @@
 class Contact
 
-  attr_accessor :first_name, :last_name, :email
+  attr_accessor :first_name, :last_name, :email, :phone
 
   def initialize(name, email)
     split_name(name)
     @email = email
+    @phone = {}
   end
 
   def to_s
@@ -12,9 +13,12 @@ class Contact
   end
 
   def display
+    puts "------------------------------"
     puts "First name: #{@first_name}"
     puts "Last name: #{@last_name}"
     puts "Email: #{@email}"
+    @phone.each { |key, value| puts "#{key}: #{value}" }
+    puts "------------------------------"
   end
 
   def split_name(name)
